@@ -10,10 +10,6 @@ Esta é a API de back-end para o sistema de gerenciamento de carros do desafio d
 ## Como Rodar o Projeto
 
 1.  **Clone o repositório:**
-    ```bash
-    git clone [https://github.com/seu-usuario/car-back.git](https://github.com/seu-usuario/car-back.git)
-    cd car-back
-    ```
 
 2.  **Crie e ative um ambiente virtual:**
 
@@ -37,3 +33,4 @@ Esta é a API de back-end para o sistema de gerenciamento de carros do desafio d
     uvicorn app.main:app --reload
 
 A API estará disponível em `http://127.0.0.1:8000`.
+
