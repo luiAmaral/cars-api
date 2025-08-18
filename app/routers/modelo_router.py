@@ -37,10 +37,16 @@ def read_modelo_by_id_endpoint(modelo_id: int, db: Session = Depends(get_db)):
 def create_modelo_endpoint(modelo: schemas.ModeloCreate, db: Session = Depends(get_db)):
     db_modelo = crud.create_modelo(db=db, modelo=modelo)
     
-    if db_modelo is None:
+    if db_modelo == "marca_nao_encontrada":
         raise HTTPException(
             status_code=400,
             detail=f"Marca com ID {modelo.marca_id} não encontrada."
+        )
+    
+    if db_modelo == "nome_existente":
+        raise HTTPException(
+            status_code=409,
+            detail=f"O modelo '{modelo.nome}' já existe para a marca informada."
         )
         
     return db_modelo
@@ -57,7 +63,14 @@ def update_modelo_endpoint(modelo_id: int, modelo: schemas.ModeloUpdate, db: Ses
         raise HTTPException(
             status_code=400,
             detail=f"Não foi possível atualizar: Marca com ID {modelo.marca_id} não encontrada."
-        )   
+        )
+        
+    if db_modelo == "nome_existente":
+        raise HTTPException(
+            status_code=409, 
+            detail=f"O nome do modelo '{modelo.nome}' já está em uso por outro modelo da mesma marca."
+        )
+        
     return db_modelo
 
 @router.delete("/{modelo_id}", response_model=schemas.Modelo)
