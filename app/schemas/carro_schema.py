@@ -32,6 +32,7 @@ class CarroListing(BaseModel):
     cor: str
     nome_modelo: str
     valor: float
+    brand: int
 
     class Config:
         orm_mode = True

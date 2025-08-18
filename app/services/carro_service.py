@@ -25,6 +25,7 @@ def get_all_cars_with_details(db: Session):
             "cor": carro.cor,
             "nome_modelo": carro.modelo.nome,  # Pega o nome do modelo relacionado
             "valor": carro.modelo.valor_fipe,   # Pega o valor do modelo relacionado
+            "brand": carro.modelo.marca.id,
         }
         car_list.append(car_data)
         

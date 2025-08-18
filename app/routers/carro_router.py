@@ -1,5 +1,6 @@
-from http.client import HTTPException
-from fastapi import APIRouter, Depends
+from platform import node
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import null
 from sqlalchemy.orm import Session
 from .. import  schemas
 from ..services import carro_service as crud
