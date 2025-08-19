@@ -32,7 +32,16 @@ def read_marca_by_id_endpoint(marca_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=schemas.Marca, status_code=201)
 def create_marca_endpoint(marca: schemas.MarcaCreate, db: Session = Depends(get_db)):
-    return crud.create_marca(db=db, marca=marca)
+    """Cria uma nova marca, verificando se o nome já existe."""
+    db_marca = crud.create_marca(db=db, marca=marca)
+    
+    if db_marca == "nome_existente":
+        raise HTTPException(
+            status_code=409, 
+            detail="Já existe uma marca com este nome."
+        )
+    
+    return db_marca
 
 @router.put("/{marca_id}", response_model=schemas.Marca)
 def update_marca_endpoint(marca_id: int, marca: schemas.MarcaUpdate, db: Session = Depends(get_db)):
@@ -40,6 +49,12 @@ def update_marca_endpoint(marca_id: int, marca: schemas.MarcaUpdate, db: Session
     db_marca = crud.update_marca(db, marca_id=marca_id, marca_update=marca)
     if db_marca is None:
         raise HTTPException(status_code=404, detail="Marca não encontrada")
+    
+    if db_marca == "nome_existente":
+        raise HTTPException(
+            status_code=409, 
+            detail="Já existe outra marca com este nome.")
+    
     return db_marca
 
 @router.delete("/{marca_id}", response_model=schemas.Marca)

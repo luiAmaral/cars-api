@@ -1,6 +1,12 @@
-from sqlalchemy.orm import Session, joinedload
-import time
+from sqlalchemy.orm import Session
 from app import models, schemas
+
+def get_modelo_by_name_and_marca(db: Session, nome: str, marca_id: int):
+    """Busca um modelo pelo nome e ID da marca para verificar duplicidade."""
+    return db.query(models.Modelo).filter(
+        models.Modelo.nome == nome,
+        models.Modelo.marca_id == marca_id
+    ).first()
 
 def get_modelos(db: Session, skip: int = 0, limit: int = 100):
     """Busca uma lista de modelos com paginação."""
@@ -13,9 +19,12 @@ def get_modelo(db: Session, modelo_id: int):
 def create_modelo(db: Session, modelo: schemas.ModeloCreate):
     """Cria um novo modelo no banco de dados."""
     db_marca = db.query(models.Marca).filter(models.Marca.id == modelo.marca_id).first()
-    
     if not db_marca:
-        return None
+        return "marca_nao_encontrada"
+    
+    db_modelo_existente = get_modelo_by_name_and_marca(db, nome=modelo.nome, marca_id=modelo.marca_id)
+    if db_modelo_existente:
+        return "nome_existente"
     
     db_modelo = models.Modelo(**modelo.model_dump())
     db.add(db_modelo)
@@ -35,6 +44,12 @@ def update_modelo(db: Session, modelo_id: int, modelo_update: schemas.ModeloUpda
         db_marca = db.query(models.Marca).filter(models.Marca.id == update_data["marca_id"]).first()
         if not db_marca:
             return "marca_nao_encontrada"
+            
+    if "nome" in update_data:
+        marca_id_contexto = update_data.get("marca_id", db_modelo.marca_id)
+        db_modelo_existente = get_modelo_by_name_and_marca(db, nome=update_data["nome"], marca_id=marca_id_contexto)
+        if db_modelo_existente and db_modelo_existente.id != modelo_id:
+            return "nome_existente"
 
     for key, value in update_data.items():
         setattr(db_modelo, key, value)

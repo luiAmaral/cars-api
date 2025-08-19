@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Session, joinedload
-import time
-
+from sqlalchemy.orm import Session
 from app import models, schemas
+
+def get_marca_by_name(db: Session, nome_marca: str):
+    """Busca uma única marca pelo seu nome."""
+    return db.query(models.Marca).filter(models.Marca.nome_marca == nome_marca).first()
+
 
 def get_marca(db: Session, marca_id: int):
     """Busca uma única marca pelo seu ID."""
@@ -13,11 +16,14 @@ def get_marcas(db: Session, skip: int = 0, limit: int = 100):
 
 def create_marca(db: Session, marca: schemas.MarcaCreate):
     """Cria uma nova marca no banco de dados."""
-    # Cria um objeto do modelo SQLAlchemy a partir dos dados do schema
+    db_marca_existente = get_marca_by_name(db, nome_marca=marca.nome_marca)
+    if db_marca_existente:
+        return "nome_existente"
+
     db_marca = models.Marca(nome_marca=marca.nome_marca)
-    db.add(db_marca)      # Adiciona o objeto à sessão do banco
-    db.commit()           # Confirma (salva) as mudanças no banco
-    db.refresh(db_marca)  # Atualiza o objeto com os dados do banco (como o novo id)
+    db.add(db_marca)
+    db.commit()
+    db.refresh(db_marca)
     return db_marca
 
 def update_marca(db: Session, marca_id: int, marca_update: schemas.MarcaUpdate):
@@ -26,9 +32,13 @@ def update_marca(db: Session, marca_id: int, marca_update: schemas.MarcaUpdate):
     if not db_marca:
         return None
     
-    # Pega os dados do schema que foram enviados (excluindo os que não foram setados)
     update_data = marca_update.model_dump(exclude_unset=True)
-    
+
+    if "nome_marca" in update_data:
+        db_marca_existente = get_marca_by_name(db, nome_marca=update_data["nome_marca"])
+        if db_marca_existente and db_marca_existente.id != marca_id:
+            return "nome_existente"
+
     for key, value in update_data.items():
         setattr(db_marca, key, value)
         
