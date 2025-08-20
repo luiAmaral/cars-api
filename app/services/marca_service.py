@@ -2,20 +2,16 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 
 def get_marca_by_name(db: Session, nome_marca: str):
-    """Busca uma única marca pelo seu nome."""
     return db.query(models.Marca).filter(models.Marca.nome_marca == nome_marca).first()
 
 
 def get_marca(db: Session, marca_id: int):
-    """Busca uma única marca pelo seu ID."""
     return db.query(models.Marca).filter(models.Marca.id == marca_id).first()
 
 def get_marcas(db: Session, skip: int = 0, limit: int = 100):
-    """Busca uma lista de marcas com paginação."""
     return db.query(models.Marca).offset(skip).limit(limit).all()
 
 def create_marca(db: Session, marca: schemas.MarcaCreate):
-    """Cria uma nova marca no banco de dados."""
     db_marca_existente = get_marca_by_name(db, nome_marca=marca.nome_marca)
     if db_marca_existente:
         return "nome_existente"
@@ -27,7 +23,6 @@ def create_marca(db: Session, marca: schemas.MarcaCreate):
     return db_marca
 
 def update_marca(db: Session, marca_id: int, marca_update: schemas.MarcaUpdate):
-    """Atualiza uma marca existente."""
     db_marca = get_marca(db, marca_id=marca_id)
     if not db_marca:
         return None
@@ -47,7 +42,6 @@ def update_marca(db: Session, marca_id: int, marca_update: schemas.MarcaUpdate):
     return db_marca
 
 def delete_marca(db: Session, marca_id: int):
-    """Deleta uma marca, verificando se há modelos dependentes."""
     modelo_associado = db.query(models.Modelo).filter(models.Modelo.marca_id == marca_id).first()
 
     if modelo_associado:

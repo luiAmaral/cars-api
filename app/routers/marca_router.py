@@ -32,7 +32,6 @@ def read_marca_by_id_endpoint(marca_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=schemas.Marca, status_code=201)
 def create_marca_endpoint(marca: schemas.MarcaCreate, db: Session = Depends(get_db)):
-    """Cria uma nova marca, verificando se o nome já existe."""
     db_marca = crud.create_marca(db=db, marca=marca)
     
     if db_marca == "nome_existente":
@@ -45,7 +44,6 @@ def create_marca_endpoint(marca: schemas.MarcaCreate, db: Session = Depends(get_
 
 @router.put("/{marca_id}", response_model=schemas.Marca)
 def update_marca_endpoint(marca_id: int, marca: schemas.MarcaUpdate, db: Session = Depends(get_db)):
-    """Atualiza os dados de uma marca específica."""
     db_marca = crud.update_marca(db, marca_id=marca_id, marca_update=marca)
     if db_marca is None:
         raise HTTPException(status_code=404, detail="Marca não encontrada")
@@ -59,7 +57,6 @@ def update_marca_endpoint(marca_id: int, marca: schemas.MarcaUpdate, db: Session
 
 @router.delete("/{marca_id}", response_model=schemas.Marca)
 def delete_marca_endpoint(marca_id: int, db: Session = Depends(get_db)):
-    """Remove uma marca do banco de dados."""
     db_marca = crud.delete_marca(db, marca_id=marca_id)
     
     if db_marca is None:

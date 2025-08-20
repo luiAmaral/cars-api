@@ -12,6 +12,5 @@ class Modelo(Base):
     
     marca_id = Column(Integer, ForeignKey("marca.id"))
 
-    # CORREÇÃO: Usar strings no relationship
     marca = relationship("Marca", back_populates="modelos")
     carros = relationship("Carro", back_populates="modelo")

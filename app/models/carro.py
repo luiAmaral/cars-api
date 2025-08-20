@@ -1,4 +1,3 @@
-# app/models/carro_model.py
 from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -15,5 +14,4 @@ class Carro(Base):
 
     modelo_id = Column(Integer, ForeignKey("modelo.id"))
 
-    # CORREÇÃO: Usar string no relationship
     modelo = relationship("Modelo", back_populates="carros")

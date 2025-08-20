@@ -36,7 +36,7 @@ def create_carro_endpoint(carro: schemas.CarroCreate, db: Session = Depends(get_
 
     if db_carro is None:
         raise HTTPException(
-            status_code=400, # 400 Bad Request
+            status_code=400,
             detail=f"Não foi possível criar o carro: Modelo com ID {carro.modelo_id} não encontrado."
         )
 
@@ -44,7 +44,6 @@ def create_carro_endpoint(carro: schemas.CarroCreate, db: Session = Depends(get_
 
 @router.put("/{carro_id}", response_model=schemas.Carro)
 def update_carro_endpoint(carro_id: int, carro: schemas.CarroUpdate, db: Session = Depends(get_db)):
-    """Atualiza os dados de um carro específico."""
     updated_carro = crud.update_carro(db, carro_id=carro_id, carro_update=carro)
     
     if updated_carro is None:
@@ -60,7 +59,6 @@ def update_carro_endpoint(carro_id: int, carro: schemas.CarroUpdate, db: Session
 
 @router.delete("/{carro_id}", response_model=schemas.Carro)
 def delete_carro_endpoint(carro_id: int, db: Session = Depends(get_db)):
-    """Remove um carro do banco de dados."""
     db_carro = crud.delete_carro(db, carro_id=carro_id)
     if db_carro is None:
         raise HTTPException(status_code=404, detail="Carro não encontrado")

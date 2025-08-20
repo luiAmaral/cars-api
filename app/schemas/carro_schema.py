@@ -21,7 +21,6 @@ class Carro(CarroBase):
 class CarroUpdate(CarroBase):
     pass
 
-# Schemas para o endpoint customizado
 class CarroListing(BaseModel):
     id: int
     timestamp_cadastro: int

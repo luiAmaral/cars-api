@@ -10,7 +10,6 @@ router = APIRouter(
     tags=["Modelos"]
 )
 
-# Reutilizando a mesma função de dependência
 def get_db():
     db = SessionLocal()
     try:
@@ -20,9 +19,6 @@ def get_db():
         
 @router.get("/", response_model=List[schemas.Modelo])
 def read_modelos_endpoint(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    """
-    Lista todos os modelos de carros cadastrados.
-    """
     modelos = crud.get_modelos(db, skip=skip, limit=limit)
     return modelos
 
@@ -53,7 +49,6 @@ def create_modelo_endpoint(modelo: schemas.ModeloCreate, db: Session = Depends(g
 
 @router.put("/{modelo_id}", response_model=schemas.Modelo)
 def update_modelo_endpoint(modelo_id: int, modelo: schemas.ModeloUpdate, db: Session = Depends(get_db)):
-    """Atualiza os dados de um modelo específico."""
     db_modelo = crud.update_modelo(db, modelo_id=modelo_id, modelo_update=modelo)
     
     if db_modelo is None:
@@ -75,7 +70,6 @@ def update_modelo_endpoint(modelo_id: int, modelo: schemas.ModeloUpdate, db: Ses
 
 @router.delete("/{modelo_id}", response_model=schemas.Modelo)
 def delete_modelo_endpoint(modelo_id: int, db: Session = Depends(get_db)):
-    """Remove um modelo do banco de dados."""
     db_modelo = crud.delete_modelo(db, modelo_id=modelo_id)
     
     if db_modelo is None:
